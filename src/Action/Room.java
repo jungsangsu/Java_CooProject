@@ -1,4 +1,6 @@
-package DO;
+package Action;
+
+import java.util.Vector;
 
 public class Room {
 	private int RID;
@@ -6,11 +8,13 @@ public class Room {
 	private String password;
 	private int userCount;
 	private String adminName;
-	
+
+	Vector<UserDTO> userV;// userV: 같은 방에 접속한 Client정보 저장
+
 	public Room() {
-		this(0,"","",0,"");
+		userV = new Vector<>();
 	}
-	
+
 	public Room(int rID, String title, String password, int userCount, String adminName) {
 		this.RID = rID;
 		this.title = title;
@@ -64,5 +68,5 @@ public class Room {
 		return "Room [RID=" + RID + ", title=" + title + ", password=" + password + ", userCount=" + userCount
 				+ ", adminName=" + adminName + "]";
 	}
-	
+
 }

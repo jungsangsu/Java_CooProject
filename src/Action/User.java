@@ -1,4 +1,4 @@
-package DO;
+package Action;
 
 public class User {
 	private int pryNumber;
@@ -10,11 +10,12 @@ public class User {
 	private String phoneNumberFirst;
 	private String phoneNumberSecond;
 	private String phoneNumberthird;
+
 	private int adminCon;
 	private int RoomNumber;
-	
+
 	public User() {
-		this(0,"","","",0,"","","","",0,0);
+		this(0, "", "", "", 0, "", "", "", "", 0, 0);
 	}
 
 	public User(int pryNumber, String idName, String password, String name, int age, String email,
@@ -127,6 +128,5 @@ public class User {
 				+ ", phoneNumberSecond=" + phoneNumberSecond + ", phoneNumberthird=" + phoneNumberthird + ", adminCon="
 				+ adminCon + ", RoomNumber=" + RoomNumber + "]";
 	}
-	
-	
+
 }

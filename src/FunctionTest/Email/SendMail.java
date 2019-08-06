@@ -37,10 +37,12 @@ public class SendMail {
 			message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
 
 			// Subject
-			message.setSubject("[Subject] Java Mail Test");
+			message.setSubject("[CooService] 인증번호 발송입니다");
 
 			// Text
-			message.setText("Simple mail test..");
+			int number = (int)(Math.random()*9999)+1000;
+			
+			message.setText("인증번호 : " +number +"\n 인증번호를 입력해주세요!!");
 
 			// send the message
 			Transport.send(message);
@@ -50,4 +52,8 @@ public class SendMail {
 			e.printStackTrace();
 		}
 	}
+	
+//	public static void main(String[] args) {
+//		SendMail.SendMail("rtr456@naver.com");
+//	}
 }
