@@ -8,17 +8,23 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.border.EtchedBorder;
 
 import CoControl.CoprocessFrame;
+import Room.RoomMake;
 
 /**
  * @author 형곤
@@ -26,33 +32,33 @@ import CoControl.CoprocessFrame;
  *
  */
 public class RoomFrame extends JFrame implements ActionListener {
-
-	private JPanel upP, chatP, chatP1, listP, list1P, list2P, roomP, roomP1, sumP, r1P, r2P, r3P, r4P, r5P, r6P;
-	private JTextArea chatarea, entarea, listarea;
-	private JTextField chattxt, tx1, tx2, tx3, tx4, tx5, tx6;
-	private JLabel la1, la2, la3, la4, la5;
-
-	public JButton sortB, makeB, exitB, sendB;
-
-	RoomMake Roommake;
-	CoprocessFrame cooprocessF;
-
+	public JButton makeB, exitB, sendB, enterB;
+	private JComboBox<String> sortCB;
+	private JPanel upP, chatP, chatP1, listP, list1P, list2P, roomP, roomP1, sumP, centerPanel;
+	private JPanel[] sortrm;
+	private JTextArea chatarea;
+	private JTextField chattxt, tx1, tx2, tx3, tx4, tx5, tx6, tx7, tx8;
+	private JLabel la1, la2, la3, la4, la5, la6;
+	private String[] com = { "경영지원", "마케팅", "고객관리", "개발", "디자인" };
+	private JList<String> entlist, frlist;
+	private EtchedBorder eb;
+	private JList<DetailPanel> list;
+	private DefaultListModel<DetailPanel> model;
+	RoomMake rmake;
 	public RoomFrame() {
-
-		Roommake = new RoomMake();
-		cooprocessF = new CoprocessFrame();
-
 		// 상단버튼
+		rmake = new RoomMake();
+		
 		upP = new JPanel(new FlowLayout());
-
-		sortB = new JButton("정렬");
-		sortB.setPreferredSize(new Dimension(200, 50));
+		la6 = new JLabel("정 렬 : ");
+		sortCB = new JComboBox<String>(com);
+		sortCB.setPreferredSize(new Dimension(200, 30));
 		makeB = new JButton("방 만 들 기");
-		makeB.setPreferredSize(new Dimension(400, 50));
+		makeB.setPreferredSize(new Dimension(400, 30));
 		exitB = new JButton("exit");
-		exitB.setPreferredSize(new Dimension(200, 50));
-
-		upP.add(sortB);
+		exitB.setPreferredSize(new Dimension(200, 30));
+		upP.add(la6);
+		upP.add(sortCB);
 		upP.add(makeB);
 		upP.add(exitB);
 
@@ -60,35 +66,14 @@ public class RoomFrame extends JFrame implements ActionListener {
 		roomP = new JPanel(new BorderLayout());
 		la4 = new JLabel("채팅방 목록");
 		la4.setFont(new Font("돋움", Font.PLAIN, 20));
-		roomP1 = new JPanel(new GridLayout(3, 2, 5, 5));
-		r1P = new JPanel();
-		tx1 = new JTextField(20);
-		r1P.add(tx1);
-		r2P = new JPanel();
-		tx2 = new JTextField(20);
-		r2P.add(tx2);
-		r3P = new JPanel();
-		tx3 = new JTextField(20);
-		r3P.add(tx3);
-		r4P = new JPanel();
-		tx4 = new JTextField(20);
-		r4P.add(tx4);
-		r5P = new JPanel();
-		tx5 = new JTextField(20);
-		r5P.add(tx5);
-		r6P = new JPanel();
-		tx6 = new JTextField(20);
-		r6P.add(tx6);
 
-		roomP1.add(r1P);
-		roomP1.add(r2P);
-		roomP1.add(r3P);
-		roomP1.add(r4P);
-		roomP1.add(r5P);
-		roomP1.add(r6P);
+		centerPanel = new JPanel(new GridLayout(4, 2, 10, 10));
+		for (int i = 0; i < 8; i++) {
+			centerPanel.add(new DetailPanel());
+		}
 
+		roomP.add("Center", centerPanel);
 		roomP.add("North", la4);
-		roomP.add("Center", roomP1);
 
 		// 대기자 채팅목록
 		chatP = new JPanel(new BorderLayout());
@@ -118,8 +103,8 @@ public class RoomFrame extends JFrame implements ActionListener {
 		list1P = new JPanel(new BorderLayout());
 		la2 = new JLabel(" 들어온 사람  ");
 		la2.setFont(new Font("돋움", Font.PLAIN, 15));
-		entarea = new JTextArea(30, 20);
-		JScrollPane scroll1 = new JScrollPane(entarea);
+		entlist = new JList<String>(new DefaultListModel<String>());
+		JScrollPane scroll1 = new JScrollPane(entlist);
 		scroll1.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		scroll1.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
@@ -131,8 +116,8 @@ public class RoomFrame extends JFrame implements ActionListener {
 
 		la3 = new JLabel(" 친 구 목 록");
 		la3.setFont(new Font("돋움", Font.PLAIN, 15));
-		listarea = new JTextArea(30, 20);
-		JScrollPane scroll2 = new JScrollPane(listarea);
+		frlist = new JList<String>(new DefaultListModel<String>());
+		JScrollPane scroll2 = new JScrollPane(frlist);
 		scroll2.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		scroll2.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
@@ -158,31 +143,63 @@ public class RoomFrame extends JFrame implements ActionListener {
 //		setVisible(true);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
+		// DB에서 jlist연동 부분
+		
+//		sortCB.addActionListener(this);
 		makeB.addActionListener(this);
-		Roommake.canB.addActionListener(this);
-		cooprocessF.deleteB.addActionListener(this);
-		Roommake.makeB.addActionListener(this);
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == makeB) {
-			this.setVisible(false);
-			Roommake.setVisible(true);
-		} else if (e.getSource() == Roommake.canB) {
-			Roommake.setVisible(false);
-			this.setVisible(true);
-		} else if (e.getSource() == Roommake.makeB) {
-			Roommake.setVisible(false);
-			cooprocessF.setVisible(true);
-		} else if(e.getSource() == cooprocessF.deleteB){
-			cooprocessF.setVisible(false);
-			this.setVisible(true);
-		}
-			
+		exitB.addActionListener(this);
+//		enterB.addActionListener(this);
 		
 
+	}// 생성자
+
+	private Object GridLayout(int i, int j, int k, int l) {
+		// TODO Auto-generated method stub
+		return null;
 	}
+
+	// 이벤트
+//	private void event() {
+//		sortCB.addActionListener(this);
+//		makeB.addActionListener(this);
+//		exitB.addActionListener(this);
+//		enterB.addActionListener(this);
+//
+//	}
+
+	public void sortCB() {
+		// String getItem = (String) sortCB.getSelectedItem();
+		while (true) {
+			for (String ss : com) {
+				if (ss.equals("db값")) {
+					for (int i = 0; i < 8; i++) {
+						centerPanel.add(new DetailPanel());
+
+					}
+
+				}
+			}
+			break;
+		}
+
+	}
+
+	// 실행부분
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == sortCB) {
+			sortCB();
+
+		} else if (e.getSource() == makeB) {
+			this.setVisible(false);
+			rmake.setVisible(true);
+		} else if (e.getSource() == exitB) {
+		} else if (e.getSource() == enterB) {
+			CoprocessFrame Cc = new CoprocessFrame();
+		}
+	}
+
+	// 들어온사람, 친구목록
 
 //	public static void main(String[] args) {
 //		new RoomFrame();

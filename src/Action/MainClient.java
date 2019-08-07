@@ -1,5 +1,4 @@
-package run;
-
+package Action;
 
 import Login.EnterFrame;
 
@@ -8,9 +7,9 @@ import Login.EnterFrame;
  * @category Main
  *
  */
-public class Main {
+public class MainClient {
 
 	public static void main(String[] args) {
-		new EnterFrame();
+		new EnterFrame().network();
 	}
 }

@@ -1,22 +1,39 @@
-package Action;
+package Chatting;
 
 import java.awt.Color;
+
 import java.awt.event.ActionEvent;
+
 import java.awt.event.ActionListener;
+
 import java.awt.event.MouseAdapter;
+
 import java.awt.event.MouseEvent;
+
 import java.io.BufferedReader;
+
 import java.io.IOException;
+
 import java.io.InputStreamReader;
+
 import java.io.OutputStream;
+
 import java.net.Socket;
+
 import java.net.UnknownHostException;
+
 import javax.swing.JButton;
+
 import javax.swing.JFrame;
+
 import javax.swing.JList;
+
 import javax.swing.JOptionPane;
+
 import javax.swing.JPanel;
+
 import javax.swing.JScrollPane;
+
 import javax.swing.border.TitledBorder;
 
 public class MainChat extends JFrame implements ActionListener, Runnable {
@@ -363,7 +380,7 @@ public class MainChat extends JFrame implements ActionListener, Runnable {
 					cc.ta.append("=========[" + msgs[1] + "]님 퇴장=========\n");
 
 					cc.ta.setCaretPosition(cc.ta.getText().length());
-
+					
 					break;
 
 				case "202":// 개설된 방의 타이틀 제목 얻기

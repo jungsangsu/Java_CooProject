@@ -3,67 +3,51 @@ package Action;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Vector;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
+public class MainServer {
+	private ServerSocket ss; // 서버 소켓
+	private ArrayList<MainHandler> allUserList; // 전체 사용자
 
-public class MainServer implements Runnable {
-	// Server클래스: 소켓을 통한 접속서비스, 접속클라이언트 관리
-
-	Vector<UserDTO> allV;// 모든 사용자(대기실사용자 + 대화방사용자)
-	Vector<UserDTO> waitV;// 대기실 사용자
-	Vector<Room> roomV;// 개설된 대화방 Room-vs(Vector) : 대화방사용자
+	private Connection conn;
+	private String driver = "oracle.jdbc.driver.OracleDriver";
+	private String url = "jdbc:oracle:thin:@localhost:1521:xe";
+	private String user = "java";
+	private String password = "tkdtn";
 
 	public MainServer() {
 
-		allV = new Vector<>();
-
-		waitV = new Vector<>();
-
-		roomV = new Vector<>();
-
-		// Thread t = new Thread(run메소드의 위치); t.start();
-
-		new Thread(this).start();
-
-	}// 생성자
-
-	@Override
-
-	public void run() {
-
 		try {
+			Class.forName(driver);
+			conn = DriverManager.getConnection(url, user, password); //DB 연결
+			
+			ss = new ServerSocket(9500);
+			System.out.println("서버준비완료");
 
-			ServerSocket ss = new ServerSocket(5000);
-
-			// 현재 실행중인 ip + 명시된 port ----> 소켓서비스
-
-			System.out.println("Start Server.......");
+			allUserList = new ArrayList<MainHandler>(); // 전체 사용자
 
 			while (true) {
-
-				Socket s = ss.accept();// 클라이언트 접속 대기
-
-				// s: 접속한 클라이언트의 소켓정보
-
-				UserDTO ser = new UserDTO(s, this);
-
-				// allV.add(ser);//전체사용자에 등록
-
-				// waitV.add(ser);//대기실사용자에 등록
-
-			}
-
-		} catch (IOException e) {
-
+				Socket socket = ss.accept();
+				MainHandler handler = new MainHandler(socket, allUserList,conn);// 스레드 생성
+				handler.start();// 스레드 시작
+				allUserList.add(handler);
+			} // while
+		} catch (IOException io) {
+			io.printStackTrace();
+		} catch (SQLException e) {
 			e.printStackTrace();
-
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
 		}
+	}
 
-	}// run
 
+	
 	public static void main(String[] args) {
-
 		new MainServer();
-
 	}
 }

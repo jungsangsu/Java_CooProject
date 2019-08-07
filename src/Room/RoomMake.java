@@ -1,9 +1,10 @@
 package Room;
 
-import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -13,6 +14,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import CoControl.CoprocessFrame;
+import oracle.net.aso.c;
+
 public class RoomMake extends JFrame {
 
 	private JLabel title, subject, pw, num;
@@ -21,7 +25,12 @@ public class RoomMake extends JFrame {
 	JButton makeB, canB;
 	private JComboBox<String> combo, combo1;
 
+	CoprocessFrame cpf;
+	
 	public RoomMake() {
+		
+		cpf = new CoprocessFrame();
+		
 		title = new JLabel("规力格 :");
 		subject = new JLabel("规林力 :");
 		pw = new JLabel("厚剐锅龋 :");
@@ -77,6 +86,15 @@ public class RoomMake extends JFrame {
 //		setVisible(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
+		makeB.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+				cpf.setVisible(true);
+			}
+		});
+		
 	}
 	
 //	public static void main(String[] args) {

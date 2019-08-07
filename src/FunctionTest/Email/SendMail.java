@@ -11,8 +11,9 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 public class SendMail {
-	public static void SendMail(String email) {
+	public static int SendMail(String email) {
 
+		int number = 0;
 		String host = "smtp.naver.com";
 		final String user = "rtr456";
 		final String password = "tkdtn2030112!@#";
@@ -40,7 +41,7 @@ public class SendMail {
 			message.setSubject("[CooService] 인증번호 발송입니다");
 
 			// Text
-			int number = (int)(Math.random()*9999)+1000;
+			number = (int)(Math.random()*9999)+1000;
 			
 			message.setText("인증번호 : " +number +"\n 인증번호를 입력해주세요!!");
 
@@ -51,6 +52,8 @@ public class SendMail {
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		}
+		
+		return number;
 	}
 	
 //	public static void main(String[] args) {

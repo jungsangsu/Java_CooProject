@@ -5,32 +5,24 @@ public class User {
 	private String idName;
 	private String password;
 	private String name;
-	private int age;
+	private String age;
 	private String email;
-	private String phoneNumberFirst;
-	private String phoneNumberSecond;
-	private String phoneNumberthird;
-
-	private int adminCon;
-	private int RoomNumber;
+	private String phoneNumber;
 
 	public User() {
-		this(0, "", "", "", 0, "", "", "", "", 0, 0);
+		this(0, "", "", "", "", "", "");
 	}
 
-	public User(int pryNumber, String idName, String password, String name, int age, String email,
-			String phoneNumberFirst, String phoneNumberSecond, String phoneNumberthird, int adminCon, int roonNumber) {
+	public User(int pryNumber, String idName, String password, String name, String age, String email,
+			String phoneNumber) {
+		super();
 		this.pryNumber = pryNumber;
 		this.idName = idName;
 		this.password = password;
 		this.name = name;
 		this.age = age;
 		this.email = email;
-		this.phoneNumberFirst = phoneNumberFirst;
-		this.phoneNumberSecond = phoneNumberSecond;
-		this.phoneNumberthird = phoneNumberthird;
-		this.adminCon = adminCon;
-		this.RoomNumber = roonNumber;
+		this.phoneNumber = phoneNumber;
 	}
 
 	public int getPryNumber() {
@@ -65,11 +57,11 @@ public class User {
 		this.name = name;
 	}
 
-	public int getAge() {
+	public String getAge() {
 		return age;
 	}
 
-	public void setAge(int age) {
+	public void setAge(String age) {
 		this.age = age;
 	}
 
@@ -81,52 +73,18 @@ public class User {
 		this.email = email;
 	}
 
-	public String getPhoneNumberFirst() {
-		return phoneNumberFirst;
+	public String getPhoneNumber() {
+		return phoneNumber;
 	}
 
-	public void setPhoneNumberFirst(String phoneNumberFirst) {
-		this.phoneNumberFirst = phoneNumberFirst;
-	}
-
-	public String getPhoneNumberSecond() {
-		return phoneNumberSecond;
-	}
-
-	public void setPhoneNumberSecond(String phoneNumberSecond) {
-		this.phoneNumberSecond = phoneNumberSecond;
-	}
-
-	public String getPhoneNumberthird() {
-		return phoneNumberthird;
-	}
-
-	public void setPhoneNumberthird(String phoneNumberthird) {
-		this.phoneNumberthird = phoneNumberthird;
-	}
-
-	public int getAdminCon() {
-		return adminCon;
-	}
-
-	public void setAdminCon(int adminCon) {
-		this.adminCon = adminCon;
-	}
-
-	public int getRoomNumber() {
-		return RoomNumber;
-	}
-
-	public void setRoomNumber(int roomNumber) {
-		RoomNumber = roomNumber;
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 
 	@Override
 	public String toString() {
 		return "User [pryNumber=" + pryNumber + ", idName=" + idName + ", password=" + password + ", name=" + name
-				+ ", age=" + age + ", email=" + email + ", phoneNumberFirst=" + phoneNumberFirst
-				+ ", phoneNumberSecond=" + phoneNumberSecond + ", phoneNumberthird=" + phoneNumberthird + ", adminCon="
-				+ adminCon + ", RoomNumber=" + RoomNumber + "]";
+				+ ", age=" + age + ", email=" + email + ", phoneNumber=" + phoneNumber + "]";
 	}
 
 }

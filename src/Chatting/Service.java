@@ -1,28 +1,41 @@
-package Action;
+package Chatting;
 
 import java.io.BufferedReader;
+
 import java.io.IOException;
+
 import java.io.InputStreamReader;
+
 import java.io.OutputStream;
+
 import java.net.Socket;
+
 import java.util.Vector;
 
-public class UserDTO extends Thread {
+public class Service extends Thread {
 
-	User user;
-	Room myRoom;
+	// Service == 접속 클라이언트 한명!!
+
+	Room myRoom;// 클라이언트가 입장한 대화방
+
+	// 소켓관련 입출력서비스
 
 	BufferedReader in;
+
 	OutputStream out;
 
-	Vector<UserDTO> allV;// 모든 사용자(대기실사용자 + 대화방사용자)
-	Vector<UserDTO> waitV;// 대기실 사용자
+	Vector<Service> allV;// 모든 사용자(대기실사용자 + 대화방사용자)
+
+	Vector<Service> waitV;// 대기실 사용자
+
 	Vector<Room> roomV;// 개설된 대화방 Room-vs(Vector) : 대화방사용자
 
 	Socket s;
 
-	public UserDTO(Socket s, MainServer server) {
-		user = new User();
+	String nickName;
+
+	public Service(Socket s, Server server) {
+
 		allV = server.allV;
 
 		waitV = server.waitV;
@@ -48,7 +61,9 @@ public class UserDTO extends Thread {
 	}// 생성자
 
 	@Override
+
 	public void run() {
+
 		try {
 
 			while (true) {
@@ -82,8 +97,8 @@ public class UserDTO extends Thread {
 
 					case "150": // 대화명 입력
 
-						user.setName(msgs[1]);
-						System.out.println("userName : " + user.getName());
+						nickName = msgs[1];
+
 						// 최초 대화명 입력했을때 대기실의 정보를 출력
 
 						messageWait("160|" + getRoomInfo());
@@ -96,11 +111,11 @@ public class UserDTO extends Thread {
 
 						myRoom = new Room();
 
-						myRoom.setTitle(msgs[1]);// 방제목
+						myRoom.title = msgs[1];// 방제목
 
-						myRoom.setUserCount(1);
+						myRoom.count = 1;
 
-						myRoom.setAdminName(user.getName());
+						myRoom.boss = nickName;
 
 						roomV.add(myRoom);
 
@@ -110,7 +125,7 @@ public class UserDTO extends Thread {
 
 						myRoom.userV.add(this);
 
-						messageRoom("200|" + user.getName());// 방인원에게 입장 알림
+						messageRoom("200|" + nickName);// 방인원에게 입장 알림
 
 						// 대기실 사용자들에게 방정보를 출력
 
@@ -142,11 +157,11 @@ public class UserDTO extends Thread {
 
 							Room r = roomV.get(i);
 
-							if (r.getTitle().equals(msgs[1])) {// 일치하는 방 찾음!!
+							if (r.title.equals(msgs[1])) {// 일치하는 방 찾음!!
 
 								myRoom = r;
-								int count = r.getUserCount();
-								myRoom.setUserCount(count++);
+
+								myRoom.count++;// 인원수 1증가
 
 								break;
 
@@ -160,11 +175,11 @@ public class UserDTO extends Thread {
 
 						myRoom.userV.add(this);
 
-						messageRoom("200|" + user.getName());// 방인원에게 입장 알림
+						messageRoom("200|" + nickName);// 방인원에게 입장 알림
 
 						// 들어갈 방의 title전달
 
-						messageTo("202|" + myRoom.getTitle());
+						messageTo("202|" + myRoom.title);
 
 						messageWait("160|" + getRoomInfo());
 
@@ -174,7 +189,7 @@ public class UserDTO extends Thread {
 
 					case "300": // 메시지
 
-						messageRoom("300|[" + user.getName() + "]▶ " + msgs[1]);
+						messageRoom("300|[" + nickName + "]▶ " + msgs[1]);
 
 						// 클라이언트에게 메시지 보내기
 
@@ -182,10 +197,9 @@ public class UserDTO extends Thread {
 
 					case "400": // 대화방 퇴장
 
-						int count = myRoom.getUserCount();
-						myRoom.setUserCount(count++);// 인원수 감소
+						myRoom.count--;// 인원수 감소
 
-						messageRoom("400|" + user.getName());// 방인원들에게 퇴장 알림!!
+						messageRoom("400|" + nickName);// 방인원들에게 퇴장 알림!!
 
 						// 대화방----> 대기실 이동!!
 
@@ -229,7 +243,7 @@ public class UserDTO extends Thread {
 
 			Room r = roomV.get(i);
 
-			str += r.getTitle() + "--" + r.getUserCount();
+			str += r.title + "--" + r.count;
 
 			if (i < roomV.size() - 1)
 				str += ",";
@@ -248,9 +262,9 @@ public class UserDTO extends Thread {
 
 			// "길동,라임,주원"
 
-			UserDTO ser = myRoom.userV.get(i);
+			Service ser = myRoom.userV.get(i);
 
-			str += ser.user.getName();
+			str += ser.nickName;
 
 			if (i < myRoom.userV.size() - 1)
 				str += ",";
@@ -271,13 +285,13 @@ public class UserDTO extends Thread {
 
 			Room room = roomV.get(i);
 
-			if (room.getTitle().equals(title)) {
+			if (room.title.equals(title)) {
 
 				for (int j = 0; j < room.userV.size(); j++) {
 
-					UserDTO ser = room.userV.get(j);
+					Service ser = room.userV.get(j);
 
-					str += ser.user.getName();
+					str += ser.nickName;
 
 					if (j < room.userV.size() - 1)
 						str += ",";
@@ -302,9 +316,9 @@ public class UserDTO extends Thread {
 
 			// "길동,라임,주원"
 
-			UserDTO ser = waitV.get(i);
-			System.out.println(ser.user.getName());
-			str += ser.user.getName();
+			Service ser = waitV.get(i);
+
+			str += ser.nickName;
 
 			if (i < waitV.size() - 1)
 				str += ",";
@@ -321,7 +335,7 @@ public class UserDTO extends Thread {
 
 		for (int i = 0; i < allV.size(); i++) {// 벡터 인덱스
 
-			UserDTO service = allV.get(i); // 각각의 클라이언트 얻어오기
+			Service service = allV.get(i); // 각각의 클라이언트 얻어오기
 
 			try {
 
@@ -345,7 +359,7 @@ public class UserDTO extends Thread {
 
 		for (int i = 0; i < waitV.size(); i++) {// 벡터 인덱스
 
-			UserDTO service = waitV.get(i); // 각각의 클라이언트 얻어오기
+			Service service = waitV.get(i); // 각각의 클라이언트 얻어오기
 
 			try {
 
@@ -369,7 +383,7 @@ public class UserDTO extends Thread {
 
 		for (int i = 0; i < myRoom.userV.size(); i++) {// 벡터 인덱스
 
-			UserDTO service = myRoom.userV.get(i); // 각각의 클라이언트 얻어오기
+			Service service = myRoom.userV.get(i); // 각각의 클라이언트 얻어오기
 
 			try {
 

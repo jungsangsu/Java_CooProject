@@ -28,5 +28,6 @@
 	<classpathentry kind="lib" path="lib/poi-scratchpad-4.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/servlet-api-2.5.jar"/>
 	<classpathentry kind="lib" path="lib/xmlbeans-3.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/ojdbc7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
