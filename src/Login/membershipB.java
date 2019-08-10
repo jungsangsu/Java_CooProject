@@ -9,11 +9,13 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.text.GapContent;
 
 public class MembershipB extends JFrame {
-	JTextField nameT, idT, pwT, tel2T, tel3T, emailT, emailadductionT;
+	JPasswordField pwT;
+	JTextField nameT, idT, tel2T, tel3T, emailT, emailadductionT;
 	private JLabel nameL, idL, pwL, phoneL, ageL, ageYearL, ageMonthL, ageDayL, emailL, emailadductionL, emailcomL;;
 	JButton joinB, calneB, emeilokB, idoverlapB, emailB;;
 	JComboBox<String> telC, emailC, ageYearC, ageMonthC, ageDayC;
@@ -52,7 +54,8 @@ public class MembershipB extends JFrame {
 		p2.add(idoverlapB);
 
 		pwL = new JLabel("비밀번호");
-		pwT = new JTextField(15);
+		pwT = new JPasswordField(15);
+		pwT.setEchoChar('*');
 		JPanel p3 = new JPanel();
 		p3.add(pwL);
 		p3.add(pwT);

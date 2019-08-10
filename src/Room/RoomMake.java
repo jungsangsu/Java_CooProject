@@ -3,8 +3,6 @@ package Room;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -14,23 +12,16 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import CoControl.CoprocessFrame;
-import oracle.net.aso.c;
-
 public class RoomMake extends JFrame {
 
 	private JLabel title, subject, pw, num;
-	private JTextField tf, pf;
-	private JCheckBox cb;
-	JButton makeB, canB;
-	private JComboBox<String> combo, combo1;
+	public JTextField tf, pf;
+	public JCheckBox cb;
+	public JButton makeB, canB;
+	public JComboBox<String> combo, combo1;
 
-	CoprocessFrame cpf;
-	
 	public RoomMake() {
-		
-		cpf = new CoprocessFrame();
-		
+
 		title = new JLabel("방제목 :");
 		subject = new JLabel("방주제 :");
 		pw = new JLabel("비밀번호 :");
@@ -44,7 +35,7 @@ public class RoomMake extends JFrame {
 
 		cb = new JCheckBox();
 
-		String[] com1 = { "2명", "3명", "4명", "5명", "6명", "7명", "8명", "9명", };
+		String[] com1 = { "2", "3", "4", "5", "6", "7", "8", "9", };
 		combo1 = new JComboBox<String>(com1);
 
 		makeB = new JButton("만들기");
@@ -86,17 +77,8 @@ public class RoomMake extends JFrame {
 //		setVisible(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-		makeB.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				setVisible(false);
-				cpf.setVisible(true);
-			}
-		});
-		
 	}
-	
+//
 //	public static void main(String[] args) {
 //		new RoomMake();
 //	}

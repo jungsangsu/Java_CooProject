@@ -4,12 +4,11 @@ import Login.EnterFrame;
 
 /**
  * 
- * @category Main
- *
+ * @category Main tkd456
  */
 public class MainClient {
 
 	public static void main(String[] args) {
-		new EnterFrame().network();
+		new EnterFrame();
 	}
 }
