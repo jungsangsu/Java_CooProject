@@ -52,12 +52,12 @@ public class RoomFrame extends JFrame {
 
 	private BufferedReader br;
 	private PrintWriter pw;
-	
-	public RoomFrame(BufferedReader br,PrintWriter pw) {
-		
+
+	public RoomFrame(BufferedReader br, PrintWriter pw) {
+
 		this.br = br;
 		this.pw = pw;
-		
+
 		// 상단버튼
 //		rmake = new RoomMake();
 		dp = new DetailPanel[100];
@@ -81,7 +81,7 @@ public class RoomFrame extends JFrame {
 
 		centerPanel = new JPanel(new GridLayout(100, 2, 10, 10)); // 100개
 		for (int i = 0; i < 100; i++) {
-			dp[i] = new DetailPanel(br,pw);
+			dp[i] = new DetailPanel(br, pw);
 			centerPanel.add(dp[i]);
 		}
 		JScrollPane scrollRoomList = new JScrollPane(centerPanel);
@@ -170,7 +170,7 @@ public class RoomFrame extends JFrame {
 
 		centerPanel.removeAll();
 		for (int i = 0; i < 100; i++) {
-			dp[i] = new DetailPanel(br,pw);
+			dp[i] = new DetailPanel(br, pw);
 			centerPanel.add(dp[i]);
 		}
 

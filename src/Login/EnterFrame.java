@@ -5,8 +5,12 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -20,6 +24,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import Action.Protocol;
 import CoControl.CoprocessFrame;
@@ -27,7 +33,7 @@ import FunctionTest.Email.SendMail;
 import Room.RoomFrame;
 import Room.RoomMake;
 
-public class EnterFrame extends JFrame implements ActionListener, Runnable {
+public class EnterFrame extends JFrame implements ActionListener, Runnable, ListSelectionListener {
 	private JPasswordField pwT;
 	private JTextField idT;// , pwT;
 	private JButton idB, pwB, accessB, searchidB, searchpwB, membershipB;
@@ -134,7 +140,12 @@ public class EnterFrame extends JFrame implements ActionListener, Runnable {
 		rMakeF.canB.addActionListener(this);
 		chattingF.exitB.addActionListener(this);
 		chattingF.sendB.addActionListener(this);
-		
+		// ----------------------채팅방 관련 ---------------------------------
+		chattingF.openB.addActionListener(this);
+		chattingF.saveB.addActionListener(this);
+		chattingF.loadB.addActionListener(this);
+		chattingF.list2.addListSelectionListener(this);
+
 		//
 	}
 
@@ -443,17 +454,52 @@ public class EnterFrame extends JFrame implements ActionListener, Runnable {
 			rMakeF.combo.setSelectedIndex(0);
 			rMakeF.cb.setSelected(false);
 		} else if (e.getSource() == chattingF.exitB) { // 채팅방에서 나가기 버튼
-			
+
 			chattingF.setVisible(false);
 			RoomF.setVisible(true);
+			chattingF.model.removeAllElements();
+
 			pw.println(Protocol.EXITCHATTINGROOM + "|" + "Message");
 			pw.flush();
-			
-		} else if(e.getSource() == chattingF.sendB )
-		{
-			pw.println(Protocol.CHATTINGSENDMESSAGE + "|" + chattingF.field.getText()); //메세지를 보냄
+
+			chattingF.partList.setText("asd");
+
+		} else if (e.getSource() == chattingF.sendB) {
+			pw.println(Protocol.CHATTINGSENDMESSAGE + "|" + chattingF.field.getText()); // 메세지를 보냄
 			pw.flush();
 			chattingF.field.setText("");
+		} else if (e.getSource() == chattingF.openB) // 채팅방에서 ------> 내컴터 파일 열기
+		{
+			chattingF.openDialog();
+			chattingF.fileRead();
+
+		} else if (e.getSource() == chattingF.saveB) // 채팅방에서 ------> 내컴터 파일저장
+		{
+			chattingF.fileSave();
+			chattingF.fileWrite();
+//			listUpload();
+			chattingF.openB.setEnabled(true);
+			chattingF.saveB.setEnabled(true);
+			chattingF.loadB.setEnabled(true);
+			chattingF.deleteB.setEnabled(false);
+			chattingF.exitB.setEnabled(true);
+
+		} else if (e.getSource() == chattingF.loadB) {
+			chattingF.openDialog();
+			pw.println(Protocol.CHATTINGFILESEND_SYN + "|" + chattingF.file.getName());
+			pw.flush();
+		}
+	}
+
+	@Override
+	public void valueChanged(ListSelectionEvent arg0) {
+		System.out.println("Listlistioner");
+		for (int i = 0; i < chattingF.model.getSize(); i++) {
+			if (chattingF.list2.isSelectedIndex(i)) {
+				chattingF.fileSave();
+				pw.println(Protocol.CHATTINGFILEDOWNLOAD_SYN + "|" + chattingF.list2.getSelectedValue());
+				pw.flush();
+			}
 		}
 	}
 
@@ -516,16 +562,16 @@ public class EnterFrame extends JFrame implements ActionListener, Runnable {
 
 				} else if (line[0].compareTo(Protocol.SENDMESSAGE_ACK) == 0) // 서버로 메세지 받음 [대기실]
 				{
-					RoomF.chatarea.append("["+line[1] +"] :" +line[2] + '\n');
+					RoomF.chatarea.append("[" + line[1] + "] :" + line[2] + '\n');
 
 				} else if (line[0].compareTo(Protocol.ROOMMAKE_OK) == 0) // 방만들어짐
 				{
 					System.out.println("이거 되냐?");
 					String roomList[] = line[1].split("-"); // 방 갯수
 					for (int i = 0; i < roomList.length; i++) {
-						System.out.print(roomList[i]+"/");
+						System.out.print(roomList[i] + "/");
 					}
-					
+
 					String roomListDetail[]; // 방세부
 					System.out.println("RoomList size : " + roomList.length);
 
@@ -557,13 +603,15 @@ public class EnterFrame extends JFrame implements ActionListener, Runnable {
 						System.out.println("userNumber : " + userNumber);
 
 					}
-
+					chattingF.area.setText("");
+					chattingF.area1.setText("");
 					rMakeF.setVisible(false); // 대기방 화면 끄고
 					RoomF.setVisible(true);
 
 				} else if (line[0].compareTo(Protocol.ROOMMAKE_OK1) == 0) // 방만들어짐 (만든 당사자) // 입장
 				{
 					rMakeF.setVisible(false); // 대기방 화면 끄고
+					chattingF.area.setText("");
 					chattingF.setVisible(true);
 					chattingF.partList.setText(line[1] + "\n");
 
@@ -571,6 +619,8 @@ public class EnterFrame extends JFrame implements ActionListener, Runnable {
 				{
 					System.out.println("입장화면 변환");
 					RoomF.setVisible(false);
+					chattingF.area1.setText("");
+					chattingF.area.setText("");
 					chattingF.setVisible(true);
 //					System.out.println(line[2]);
 //					String roomMember[] = line[2].split("%");//룸에 들어온사람들
@@ -581,7 +631,7 @@ public class EnterFrame extends JFrame implements ActionListener, Runnable {
 
 				} else if (line[0].compareTo(Protocol.ENTERROOM_USERLISTSEND) == 0) // 채팅방 리스트 새로고침
 				{
-					
+
 					String roomMember[] = line[1].split("%");// 룸에 들어온사람들
 					String lineList = "";
 					for (int i = 0; i < roomMember.length; i++) {
@@ -589,21 +639,80 @@ public class EnterFrame extends JFrame implements ActionListener, Runnable {
 					}
 
 					chattingF.partList.setText(lineList);
-					chattingF.area1.append(line[2]+"\n");
-				} else if(line[0].compareTo(Protocol.CHATTINGSENDMESSAGE_OK)==0)
-				{
-					chattingF.area1.append("["+line[1]+"] :"+line[2]+"\n");
+					chattingF.area1.append(line[2] + "\n");
+
+					if (line.length == 4) {
+						String fileList[] = line[3].split("%");
+						chattingF.model.removeAllElements();
+						for (int i = 0; i < fileList.length; i++) {
+							chattingF.model.addElement(fileList[i]);
+						}
+					}
+
+				} else if (line[0].compareTo(Protocol.CHATTINGSENDMESSAGE_OK) == 0) {
+					chattingF.area1.append("[" + line[1] + "] :" + line[2] + "\n");
+				} else if (line[0].compareTo(Protocol.CHATTINGFILESEND_SYNACK) == 0) {
+
+					pw.println(Protocol.CHATTINGFILESEND_FILE + "|" + chattingF.file.length());
+					pw.flush();
+
+					OutputStream os = socket.getOutputStream();
+
+					System.out.println("파일 보내기 시작 !!!");
+					// 보낼 파일의 입력 스트림 객체 생성
+					FileInputStream fis = new FileInputStream(chattingF.file.getAbsoluteFile());
+
+					// 파일의 내용을 보낸다
+					byte[] b = new byte[512];
+					int n;
+					while ((n = fis.read(b, 0, b.length)) > 0) {
+						os.write(b, 0, n);
+						System.out.println(n + "bytes 보냄 !!!");
+					}
+
+					// 소켓에서 보낼 출력 스트림을 구한다.
+				} else if (line[0].compareTo(Protocol.CHATTINGFILESEND_FILEACK) == 0) {
+
+					String[] fileList = line[1].split("%");
+
+					chattingF.model.removeAllElements();
+					for (int i = 0; i < fileList.length; i++) {
+						chattingF.model.addElement(fileList[i]);
+					}
+
+				} else if (line[0].compareTo(Protocol.CHATTINGFILEDOWNLOAD_SEND) == 0) { // 파일을 받음
+					String path = chattingF.file.getAbsolutePath();
+
+					FileOutputStream fos = new FileOutputStream(path);
+					InputStream is = socket.getInputStream();
+
+					System.out.println("파일 다운로드 시작 !!!");
+
+					// 보내온 파일 내용을 파일에 저장
+
+					byte[] b = new byte[512];
+
+					int n = 0;
+					long filesize = Long.parseLong(line[1]);
+
+					while ((n = is.read(b, 0, b.length)) > 0) {
+
+						fos.write(b, 0, n);
+						System.out.println("N:" + n);
+						System.out.println(n + "bytes 다운로드 !!!");
+						n += n;
+						if (n >= filesize)
+							break;
+					}
+
+					fos.close();
+					System.out.println("파일 다운로드 끝 !!!");
 				}
-				
-				
 
 			} catch (IOException io) {
 				io.printStackTrace();
 			}
 
-//			output.append(line + "\n");
-//			int pos = output.getText().length();
-//			output.setCaretPosition(pos);
 		} // while
 	}
 }

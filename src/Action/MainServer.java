@@ -36,7 +36,7 @@ public class MainServer {
 			roomtotalList = new ArrayList<Room>(); // 전체 방리스트
 			while (true) {
 				Socket socket = ss.accept();
-				MainHandler handler = new MainHandler(socket, allUserList, WaitUserList,roomtotalList, conn);// 스레드 생성
+				MainHandler handler = new MainHandler(socket, allUserList, WaitUserList, roomtotalList, conn);// 스레드 생성
 				handler.start();// 스레드 시작
 				allUserList.add(handler);
 			} // while

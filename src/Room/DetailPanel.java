@@ -8,11 +8,12 @@ import java.io.PrintWriter;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import Action.Protocol;
 
-public class DetailPanel extends JPanel implements ActionListener{
+public class DetailPanel extends JPanel implements ActionListener {
 
 	public static String labelName[] = { "방 번호 :", "      ", "방 주제 :", "      ", "인원 수 : ", "      ", "방 제목 : ",
 			"      ", "      " };
@@ -21,8 +22,8 @@ public class DetailPanel extends JPanel implements ActionListener{
 
 	private BufferedReader br;
 	private PrintWriter pw;
-	
-	public DetailPanel(BufferedReader br,PrintWriter pw) {
+
+	public DetailPanel(BufferedReader br, PrintWriter pw) {
 		this.br = br;
 		this.pw = pw;
 	}
@@ -46,14 +47,20 @@ public class DetailPanel extends JPanel implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		System.out.println("입장버튼 ");
-		if(e.getSource() == enterButton) {
-			//서버로 입장요청 -> 룸 ID
-			String line = "";
-			line+=(Protocol.ENTERROOM+"|"+labelArray[1].getText()); //Pro + 방번호
-			pw.println(line);
-			pw.flush();
+		if (e.getSource() == enterButton) {
+
+			String count[] = labelArray[5].getText().split("/");
+
+			if (count[0].compareTo(count[1]) == 0) {
+				JOptionPane.showMessageDialog(this, "인원수 초과로 들어갈 수 없습니다");
+			} else {
+				// 서버로 입장요청 -> 룸 ID
+				String line = "";
+				line += (Protocol.ENTERROOM + "|" + labelArray[1].getText()); // Pro + 방번호
+				pw.println(line);
+				pw.flush();
+			}
 		}
 	}
-	
 
 }
