@@ -1,3 +1,5 @@
+JAVA STUDT
+
 package Action;
 
 import Login.EnterFrame;
@@ -12,3 +14,7 @@ public class MainClient {
 		new EnterFrame();
 	}
 }
+
+
+?‚´?š©?„ ë¶„ì„?•´ë³´ì•„?š”~~~~~
+

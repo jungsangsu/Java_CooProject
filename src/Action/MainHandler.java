@@ -35,12 +35,6 @@ public class MainHandler extends Thread {
 	private Room priRoom; // 사용자가 있는 방
 	private String fileName;
 
-	private String idname;
-	private String name;
-	private String age;
-	private String email;
-	private String phoneNumber1;
-
 	// 소켓, 전체사용자,대기방,방리스트,JDBC
 	public MainHandler(Socket socket, ArrayList<MainHandler> allUserList, ArrayList<MainHandler> waitUserList,
 			ArrayList<Room> roomtotalList, Connection conn) throws IOException {
@@ -148,79 +142,7 @@ public class MainHandler extends Thread {
 						pw.flush();
 					}
 
-				} else if (line[0].compareTo(Protocol.PWSEARCH) == 0) {
-					String userContent[] = line[1].split("%"); // messsage
-					String password = "";
-
-					String sql = "update UserContent set password=? where idname=?";
-
-					pstmt = conn.prepareStatement(sql);
-					pstmt.setString(1, userContent[3]);
-					pstmt.setString(2, userContent[0]);
-					pstmt.executeUpdate();
-
-				} else if (line[0].compareTo(Protocol.MEMBERINFO_OK) == 0) { // 회원정보 수정
-					String userContent[] = line[1].split("%"); // messsage
-
-					String sql = "UPDATE UserContent SET name = ?,  password = ? , age = ? , phoneNumber1 = ? , email = ? WHERE idname= ?";
-
-					pstmt = conn.prepareStatement(sql);
-
-					pstmt.setString(1, userContent[1]);
-					pstmt.setString(2, userContent[2]);
-					pstmt.setString(3, userContent[3]);
-					pstmt.setString(4, userContent[4]);
-					pstmt.setString(5, userContent[5]);
-					pstmt.setString(6, userContent[0]);
-					int su = pstmt.executeUpdate();
-					System.out.println(su + "[회원수정 DB]");
-				} else if (line[0].compareTo(Protocol.MEMBERINFO_DELETE_OK) == 0) { // 회원탈퇴
-					String userContent[] = line[1].split("%"); // messsage
-
-					String sql = "delete from UserContent where idname = ?";
-
-					pstmt = conn.prepareStatement(sql);
-					pstmt.setString(1, userContent[0]);
-					int su = pstmt.executeUpdate();
-					System.out.println(su + "[회원탈퇴DB]");
-
-				} else if (line[0].compareTo(Protocol.MEMBERINFO) == 0) { // User정보
-					System.out.println("회원정보");
-					String str = "";
-					System.out.println("id=" + idname);
-
-					String sql = "select * from UserContent where idname = ? and  name = ? and age = ? "
-							+ "and email = ? and phonenumber1 =?";
-					pstmt = conn.prepareStatement(sql);
-					pstmt.setString(1, idname);
-					pstmt.setString(2, name);
-					pstmt.setString(3, age);
-					pstmt.setString(4, email);
-					pstmt.setString(5, phoneNumber1);
-					System.out.println("현재  로그인한 회원[DB]");
-
-					ResultSet rs = pstmt.executeQuery();
-
-					while (rs.next()) {
-						System.out.println("While");
-						user.setName(rs.getString("NAME"));
-						user.setIdName(rs.getString("IDNAME"));
-						user.setAge(rs.getString("AGE"));
-						user.setPassword(rs.getString("PASSWORD"));
-						user.setPryNumber(rs.getInt("priNumber"));
-						user.setPhoneNumber(rs.getString("phoneNumber1"));
-						user.setEmail(rs.getString("email"));
-
-					}
-
-					str = user.getIdName() + "|" + user.getName() + "|" + user.getAge() + "|" + user.getEmail() + "|"
-							+ user.getPhoneNumber();
-					pw.println(Protocol.MEMBERINFO + "|" + str);
-					pw.flush();
-
-				}
-
-				else if (line[0].compareTo(Protocol.ENTERLOGIN) == 0) // [login]
+				} else if (line[0].compareTo(Protocol.ENTERLOGIN) == 0) // [login]
 				{
 
 					boolean con = true; // 기존에 로그인되어있는지 안되어있는지 변수
@@ -513,7 +435,7 @@ public class MainHandler extends Thread {
 					System.out.println(roomListMessage);
 					System.out.println(thisName);
 
-					String roomMember = ""; // --->여기 방마다 방에 유저를 넣어주는 것 추가 방에 입장한 유저를 가지고와야해 몇번방인지 찾아야함
+					String roomMember = ""; // --->여기 방마다 방에 유저를 넣어주는 것 추가 방에 입장한 유저를 가지고와야해 ㅁ몇번방인지 찾아야함
 
 					for (int i = 0; i < roomtotalList.get(index).roomInUserList.size(); i++) { // 룸안에 유저의 수만큼
 						roomMember += (roomtotalList.get(index).roomInUserList.get(i).user.getIdName() + "%");
@@ -522,7 +444,7 @@ public class MainHandler extends Thread {
 					for (int i = 0; i < waitUserList.size(); i++) {
 						if (waitUserList.get(i).user.getIdName().compareTo(thisName) == 0) { // 방들어가는사람에게는
 																								// 바로
-																								// 채팅화면으로
+																								// 채팅화면으로\
 							waitUserList.get(i).pw.println(Protocol.ENTERROOM_OK1 + "|" + "message");
 							waitUserList.get(i).pw.flush();
 						} else { // 다른 대기방사람들에게는 대기방만 새로고침
@@ -591,7 +513,7 @@ public class MainHandler extends Thread {
 								con = false;
 
 							} else { // 최소 2명일 때
-								System.out.println("나올때 내가 마지막아닐때!!");
+								System.out.println("나올때 내가 마지막아닐때!! XXX");
 								roomtotalList.get(i).roomInUserList.remove(this); // 방에 유저 빼고
 								priRoom = new Room();// 현재룸을 비워주고
 								roomIndex = i;
@@ -757,7 +679,7 @@ public class MainHandler extends Thread {
 							if (f.getName().compareTo(line[1]) == 0) // 파일이 있으면
 							{
 								selectedFile = f;
-								// System.out.println("이거 실행되나???");
+								System.out.println("이거 실행되나???1111");
 							}
 						}
 					}

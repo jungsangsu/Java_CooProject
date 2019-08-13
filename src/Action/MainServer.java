@@ -20,7 +20,7 @@ public class MainServer {
 	private String driver = "oracle.jdbc.driver.OracleDriver";
 	private String url = "jdbc:oracle:thin:@localhost:1521:xe";
 	private String user = "java";
-	private String password = "tkdtn"; //tkdtn 
+	private String password = "tkdtn";
 
 	public MainServer() {
 

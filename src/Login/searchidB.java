@@ -1,12 +1,10 @@
 package Login;
 
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -18,18 +16,16 @@ import javax.swing.JTextField;
 import FunctionTest.Email.SendMail;
 
 public class SearchidB extends JFrame  {
-	private JLabel nameL, emailL, emailadductionL, emailcomL, ageL, ageYearL, ageMonthL, 
-	ageDayL,phoneL,mainiconL;
+	private JLabel nameL, emailL, emailadductionL, emailcomL, ageL, ageYearL, ageMonthL, ageDayL, phoneL;
 	JButton okpwB, joinB, cancelB, emeilokB, emailB;
 	JTextField newpwT, okpwT, nameT, idT, emailT, emailadductionT, tel2T, tel3T;
 	JComboBox<String> telC, emailC, ageYearC, ageMonthC, ageDayC;
-	ImageIcon mainicon;
 
 	public SearchidB() {
 		setTitle("아이디 찾기");
 		String[] tel = { "010", "02", "031", "032", "033", "041", "042", "043", "044", "051", "052", "053", "054",
 				"055", "061", "062", "063", "064" };
-		String[] email = { "naver.com", "gmail.com" };
+		String[] email = { "naver.com","google.com" };
 		String[] ageYear = { "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990",
 				"1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003",
 				"2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016",
@@ -54,7 +50,6 @@ public class SearchidB extends JFrame  {
 		emailcomL = new JLabel("@");
 		emailT = new JTextField(10);
 		emailB = new JButton("인증번호 전송");
-		emailB.setBackground(Color.WHITE);
 		JPanel p2 = new JPanel();
 		p2.add(emailL);
 		p2.add(emailT);
@@ -87,27 +82,18 @@ public class SearchidB extends JFrame  {
 		emailadductionL = new JLabel("인증번호");// email-인증번호
 		emailadductionT = new JTextField(10);
 		emeilokB = new JButton("확인");
-		emeilokB.setBackground(Color.WHITE);
 		JPanel p5 = new JPanel();
 		p5.add(emailadductionL);
 		p5.add(emailadductionT);
 		p5.add(emeilokB);
 
 		joinB = new JButton("확인");
-		joinB.setBackground(Color.WHITE);
 		cancelB = new JButton("취소");
-		cancelB.setBackground(Color.WHITE);
+
 		JPanel p6 = new JPanel();
 		p6.add(joinB);
 		p6.add(cancelB);
-		
-	
-		mainicon =new ImageIcon("img/CooSeriveicon3.jpg");
-		mainiconL =new JLabel(mainicon);
-		setSize(44,65);
-		JPanel p7 = new JPanel();
-		p7.add(mainiconL);
-		
+
 		JPanel p = new JPanel(new GridLayout(6, 1));
 		p.add(p1);
 		p.add(p2);
@@ -118,8 +104,6 @@ public class SearchidB extends JFrame  {
 		Container contentPane = this.getContentPane();
 		contentPane.add("Center", p);
 		contentPane.add("South", p6);
-		contentPane.add("East", p7);
-
 
 //      setVisible(true);
 		setResizable(false);

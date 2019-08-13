@@ -1,7 +1,6 @@
 package CoControl;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -48,14 +47,9 @@ public class CoprocessFrame extends JFrame {
 	public CoprocessFrame() {
 
 		openB = new JButton("내PC 파일열기");
-		openB.setBackground(Color.WHITE);
 		saveB = new JButton("내PC 파일저장");
-		saveB.setBackground(Color.WHITE);
 		loadB = new JButton("업로드");
-		loadB.setBackground(Color.WHITE);
 		exitB = new JButton("나가기");
-		exitB.setBackground(Color.WHITE);
-		
 
 		openB.setEnabled(true);
 		saveB.setEnabled(true);
@@ -125,6 +119,7 @@ public class CoprocessFrame extends JFrame {
 		JScrollPane scroll3 = new JScrollPane(area1);
 		scroll3.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		scroll3.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		
 		area1.setEditable(false);
 		epanel3.add("North", chat);
 		epanel3.add("Center", scroll3);

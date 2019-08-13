@@ -1,3 +1,5 @@
+JAVA STUDT
+
 package Action;
 
 import Login.EnterFrame;
@@ -12,3 +14,7 @@ public class MainClient {
 		new EnterFrame();
 	}
 }
+
+
+내용을 분석해보아요~~~~~
+
