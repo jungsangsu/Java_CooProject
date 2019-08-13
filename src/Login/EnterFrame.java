@@ -1,5 +1,6 @@
 package Login;
 
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -35,10 +36,10 @@ import Room.RoomMake;
 
 public class EnterFrame extends JFrame implements ActionListener, Runnable, ListSelectionListener {
 	private JPasswordField pwT;
-	private JTextField idT;// , pwT;
+	private JTextField idT;
 	private JButton idB, pwB, accessB, searchidB, searchpwB, membershipB;
-	private JLabel loginL, logoutL;
-	private ImageIcon loginC, logoutC, modifiedC;
+	private JLabel loginL, logoutL, mainL;
+	private ImageIcon loginC, logoutC, modifiedC, mainC;
 	private Socket socket;
 	private BufferedReader br;
 	private PrintWriter pw;
@@ -49,12 +50,15 @@ public class EnterFrame extends JFrame implements ActionListener, Runnable, List
 	RoomFrame RoomF; // 대기실
 	RoomMake rMakeF; // 방만들기
 	CoprocessFrame chattingF;
+	Information MemberInfoF; // 회원정보
 
 	private String sNumber = "><^^"; // default 시크릿넘버
 	private boolean condition_S = false; // 이메일 인증확인
 	private boolean condition_Id = false; // ID 중복체크
 
 	public EnterFrame() {
+		setTitle("CooSerivice");
+
 		network();
 
 		menbersShipF = new MembershipB();
@@ -63,41 +67,50 @@ public class EnterFrame extends JFrame implements ActionListener, Runnable, List
 		RoomF = new RoomFrame(br, pw);
 		rMakeF = new RoomMake();
 		chattingF = new CoprocessFrame();
+		MemberInfoF = new Information(); // 회원정보
 
 		idB = new JButton("아이디");
+		idB.setBackground(Color.WHITE);
 		idT = new JTextField(15);
+
 		pwB = new JButton("패스워드");
+		pwB.setBackground(Color.WHITE);
 		pwT = new JPasswordField(15);
 		pwT.setEchoChar('*');
 
-		JPanel p2 = new JPanel(new FlowLayout());
-		p2.add(idB);
-		p2.add(idT);
-		p2.add(pwB);
-		p2.add(pwT);
+		JPanel p = new JPanel(new FlowLayout());
+		p.add(idB);
+		p.add(idT);
+		p.add(pwB);
+		p.add(pwT);
 
 		searchidB = new JButton("아이디 찾기");
+		searchidB.setBackground(Color.WHITE);
 		searchpwB = new JButton("비밀번호 찾기");
+		searchpwB.setBackground(Color.WHITE);
 		membershipB = new JButton("회원가입");
+		membershipB.setBackground(Color.WHITE);
 		accessB = new JButton("입장");
+		accessB.setBackground(Color.WHITE);
 
-		JPanel p3 = new JPanel();
-		p3.add(searchidB);
-		p3.add(searchpwB);
-		p3.add(membershipB);
-		p3.add(accessB);
+		JPanel p2 = new JPanel();
+		p2.add(membershipB);
+		p2.add(searchidB);
+		p2.add(searchpwB);
+		p2.add(accessB);
 
-		loginC = new ImageIcon("img/로그인.png");
-		loginL = new JLabel(loginC);
+		mainC = new ImageIcon("img/CooSeriveMain.png"); // main 배경
+		mainL = new JLabel(mainC);
 
-		JPanel p4 = new JPanel();
-		p4.add(loginL);
+		JPanel main = new JPanel();
+		main.add(mainL);
 
 		Container contentPane = this.getContentPane();
-		contentPane.add("Center", p2);
-		contentPane.add("South", p3);
-		contentPane.add("East", p4);
+		contentPane.add("South", p);
+		contentPane.add("North", p2);
+		contentPane.add("Center", main);
 
+		setBackground(Color.white);
 		setVisible(true);
 		setResizable(false);
 		setBounds(400, 200, 1000, 800);
@@ -126,13 +139,23 @@ public class EnterFrame extends JFrame implements ActionListener, Runnable, List
 		// --------------------PW찾기관련----------------------------------
 		searchpwB.addActionListener(this); // PW 찾기
 		searchpwF.cancleB.addActionListener(this); // PW찾기 취소
-
+		searchpwF.joinB.addActionListener(this); // PW찾기 확인
+		searchpwF.emailokB.addActionListener(this); // PW찾기 이메일 인증 확인 --->임시 비밀번호 로그인
+		searchpwF.emailB.addActionListener(this);// PW찾기 이메일 인증 전송
 		// --------------------로그인관련----------------------------------
 		accessB.addActionListener(this); // 입장(Login)
 		RoomF.exitB.addActionListener(this); // Room -> 로그인Page
 
+		// ---------------------회원정보 수정 및 탈퇴 관련------------------------
+		RoomF.InformationB.addActionListener(this); // Room-->회원정보
+		MemberInfoF.joinB.addActionListener(this);
+		MemberInfoF.calneB.addActionListener(this);
+		MemberInfoF.deleteB.addActionListener(this);
+		MemberInfoF.idoverlapB.addActionListener(this);
+
 		// ---------------------메세지 관련---------------------------------
 		RoomF.sendB.addActionListener(this); // 대기방에서 전송
+		//RoomF.friendB.addActionListener(this); // 대기방에서 친구추가
 
 		// ----------------------방 관련 ------------------------------------
 		RoomF.makeB.addActionListener(this);
@@ -153,7 +176,7 @@ public class EnterFrame extends JFrame implements ActionListener, Runnable, List
 
 		// 소켓 생성
 		try {
-			socket = new Socket("192.168.0.43", 9500);
+			socket = new Socket("192.168.0.43", 9500); // 192.168.0.43 -->Room502 아이피 주소
 			br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
 
@@ -358,6 +381,174 @@ public class EnterFrame extends JFrame implements ActionListener, Runnable, List
 			condition_S = false;
 			sNumber = "><^^";
 
+		} else if (e.getSource() == searchpwF) {// PW찾기
+
+		} else if (e.getSource() == searchpwF.joinB) {// PW비밀번호 찾기(확인)
+			String name = searchpwF.nameT.getText();
+			String id = searchpwF.idT.getText();
+			String email = searchpwF.emailT.getText();
+			String email1 = (String) searchpwF.emailC.getSelectedItem();
+			String emailok = searchpwF.emailadductionT.getText();
+
+			if (name.length() == 0 || id.length() == 0 || email.length() == 0 || emailok.length() == 0) {
+				JOptionPane.showMessageDialog(this, "빈칸을 입력해주세요");
+
+			} else if (condition_S) {
+				String line = "";
+				line += (id + "%" + name + "%" + email + "@" + email1 + "%" + emailok);
+				System.out.println(line);
+
+				pw.println(Protocol.PWSEARCH + "|" + line);
+				pw.flush();
+
+				searchpwF.nameT.setText("");
+				searchpwF.idT.setText("");
+				searchpwF.ageYearC.setSelectedIndex(0);
+				searchpwF.ageMonthC.setSelectedIndex(0);
+				searchpwF.ageDayC.setSelectedIndex(0);
+				searchpwF.telC.setSelectedIndex(0);
+				searchpwF.tel2T.setText("");
+				searchpwF.tel3T.setText("");
+				searchpwF.emailT.setText("");
+				searchpwF.emailC.setSelectedIndex(0);
+				searchpwF.emailadductionT.setText("");
+				condition_S = false;
+				sNumber = "><^^";
+
+			}
+
+		} else if (e.getSource() == searchpwF.emailokB) { // -->pw찾기 -->이메일 인증OK
+			{
+				if (sNumber.compareTo(searchpwF.emailadductionT.getText()) == 0) {
+					JOptionPane.showMessageDialog(this, "임시비밀 번호로 수정되었습니다.");
+					condition_S = true;
+
+				} else {
+					JOptionPane.showMessageDialog(this, "임시비밀번호가 틀렸습니다");
+				}
+			}
+
+		} else if (e.getSource() == searchpwF.emailB) { // PW찾기 페에지 ----->인증번호 전송
+			if (searchpwF.emailT.getText().length() == 0) {
+				JOptionPane.showMessageDialog(this, "이메일 입력하세요");
+			} else {
+				String emailString = searchpwF.emailT.getText() + "@" + (String) searchpwF.emailC.getSelectedItem();
+				System.out.println(emailString);
+				sNumber = String.valueOf(SendMail.SendMail(emailString));
+				JOptionPane.showMessageDialog(this, "임시 비밀번호가 발급되었습니다");
+			}
+
+		} else if (e.getSource() == searchpwF.cancleB) { // PW찾기페이지 -----------> ID찾기 취소
+
+			searchF.setVisible(false);
+			this.setVisible(true);
+
+		} else if (e.getSource() == RoomF.InformationB) {
+			String str = "";
+
+			MemberInfoF.setVisible(true); // 회원정보 프레임
+			MemberInfoF.idT.getText();
+
+			MemberInfoF.nameT.getText();
+			pw.println(Protocol.MEMBERINFO + "|" + str);
+			pw.flush();
+
+		} else if (e.getSource() == MemberInfoF.joinB) {
+			String id = MemberInfoF.idT.getText();
+			String name = MemberInfoF.nameT.getText();
+			String pw1 = MemberInfoF.pwT.getText();
+			String ageYear = (String) MemberInfoF.ageYearC.getSelectedItem();
+			String ageMonth = (String) MemberInfoF.ageMonthC.getSelectedItem();
+			String ageDay = (String) MemberInfoF.ageDayC.getSelectedItem();
+			String tel = (String) MemberInfoF.telC.getSelectedItem();
+			String tel2 = MemberInfoF.tel2T.getText();
+			String tel3 = MemberInfoF.tel3T.getText();
+			String email = MemberInfoF.emailT.getText();
+			String email1 = (String) MemberInfoF.emailC.getSelectedItem();
+
+			if (name.length() == 0 || pw1.length() == 0 || tel2.length() == 0 || tel3.length() == 0
+					|| email.length() == 0) {
+
+				JOptionPane.showMessageDialog(this, "빈칸을 입력해주세요");
+			} else {
+				System.out.println("SSSS");
+				String line = "";
+				line += (id + "%" + name + "%" + pw1 + "%" + ageYear + ageMonth + ageDay + "%" + tel + tel2 + tel3 + "%"
+						+ email + "@" + email1 + "%");
+				System.out.println(line);
+
+				pw.println(Protocol.MEMBERINFO_OK + "|" + line);
+				pw.flush();
+
+				JOptionPane.showConfirmDialog(this, "수정하시겠습니까?", "CooSerive", JOptionPane.YES_NO_CANCEL_OPTION,
+						JOptionPane.QUESTION_MESSAGE);
+
+				MemberInfoF.nameT.setText("");
+				MemberInfoF.pwT.setText("");
+				MemberInfoF.ageYearC.setSelectedIndex(0);
+				MemberInfoF.ageMonthC.setSelectedIndex(0);
+				MemberInfoF.ageDayC.setSelectedIndex(0);
+				MemberInfoF.telC.setSelectedIndex(0);
+				MemberInfoF.tel2T.setText("");
+				MemberInfoF.tel3T.setText("");
+				MemberInfoF.emailT.setText("");
+				MemberInfoF.emailC.setSelectedIndex(0);
+
+				condition_S = false;
+				sNumber = "><^^";
+
+				System.out.println("수정할 회원정보를 전송");
+			}
+
+		} else if (e.getSource() == MemberInfoF.calneB) { // 회원수정(취소)
+			RoomF.setVisible(true);
+			condition_S = false;
+			sNumber = "><^^";
+		} else if (e.getSource() == MemberInfoF.deleteB) { // 회원수정-->탈퇴
+			String id = MemberInfoF.idT.getText();
+			String name = MemberInfoF.nameT.getText();
+			String pw1 = MemberInfoF.pwT.getText();
+			String ageYear = (String) MemberInfoF.ageYearC.getSelectedItem();
+			String ageMonth = (String) MemberInfoF.ageMonthC.getSelectedItem();
+			String ageDay = (String) MemberInfoF.ageDayC.getSelectedItem();
+			String tel = (String) MemberInfoF.telC.getSelectedItem();
+			String tel2 = MemberInfoF.tel2T.getText();
+			String tel3 = MemberInfoF.tel3T.getText();
+			String email = MemberInfoF.emailT.getText();
+			String email1 = (String) MemberInfoF.emailC.getSelectedItem();
+
+			if (name.length() == 0 || pw1.length() == 0 || tel2.length() == 0 || tel3.length() == 0
+					|| email.length() == 0) {
+
+				JOptionPane.showMessageDialog(this, "빈간을 입력해주세요");
+			} else {
+				String line = "";
+				line += (id + "%" + name + "%" + pw1 + "%" + ageYear + ageMonth + ageDay + "%" + tel + tel2 + tel3 + "%"
+						+ email + "@" + email1 + "%");
+				System.out.println(line);
+
+				pw.println(Protocol.MEMBERINFO_DELETE_OK + "|" + line);
+				pw.flush();
+
+				JOptionPane.showConfirmDialog(this, "탈퇴하시겠습니까??", "CooSerive", JOptionPane.YES_NO_CANCEL_OPTION,
+						JOptionPane.QUESTION_MESSAGE);
+
+				MemberInfoF.nameT.setText("");
+				MemberInfoF.pwT.setText("");
+				MemberInfoF.ageYearC.setSelectedIndex(0);
+				MemberInfoF.ageMonthC.setSelectedIndex(0);
+				MemberInfoF.ageDayC.setSelectedIndex(0);
+				MemberInfoF.telC.setSelectedIndex(0);
+				MemberInfoF.tel2T.setText("");
+				MemberInfoF.tel3T.setText("");
+				MemberInfoF.emailT.setText("");
+				MemberInfoF.emailC.setSelectedIndex(0);
+
+				condition_S = false;
+				sNumber = "><^^";
+
+				System.out.println("회원 탈퇴가 완료되었습니다");
+			}
 		} else if (e.getSource() == accessB) { // 메인페이지 --> 대기방 (Login)
 
 			String id = idT.getText();
@@ -560,13 +751,73 @@ public class EnterFrame extends JFrame implements ActionListener, Runnable, List
 					}
 					RoomF.usertxt.setText(userlist);
 
+				} else if ((line[0].compareTo(Protocol.ENTERLOGIN_NO) == 0)) {
+
+					JOptionPane.showMessageDialog(this, line[1]);
+					System.out.println("로그인실패");
+				} else if (line[0].compareTo(Protocol.PWSEARCH_OK) == 0) {// 임시비밀 번호 OK
+					this.setVisible(false);
+					RoomF.setVisible(true);
+					JOptionPane.showMessageDialog(this, line[1]);
+					System.out.println("로그인 성공");
+				} else if (line[0].compareTo(Protocol.PWSEARCH_NO) == 0) { // 임시비밀 번호 NO
+					JOptionPane.showMessageDialog(this, line[1]);
+					System.out.println("임시비밀번호가 맞지 않습니다.");
+				} else if (line[0].compareTo(Protocol.MEMBERINFO_OK) == 0) { // 회원수정 OK
+					JOptionPane.showMessageDialog(this, line[1]);
+					System.out.println("회원정보가 수정되었습니다.");
+
+				} else if (line[0].compareTo(Protocol.MEMBERINFO_DELETE_OK) == 0) { // 회원탈퇴 OK
+					JOptionPane.showMessageDialog(this, line[1]);
+					System.out.println("회원이 탈퇴되었습니다.");
+
+				} else if (line[0].compareTo(Protocol.MEMBERINFO) == 0) { // 현재 회원 정보 OK
+					System.out.println(
+							line[0] + " , " + line[1] + "," + line[2] + "," + line[3] + "," + line[4] + "," + line[5]);
+					System.out.println("현재 접속된 회원의 정보를 보여드립니다.");
+					// 번호, 아이디, 이름,생년월일, 휴대폰
+					MemberInfoF.idT.setText(line[1]);
+					MemberInfoF.nameT.setText(line[2]);
+
+					String age = line[3]; // 나이
+					String ageyear = age.substring(age.length() - 8, age.length() - 4);
+					MemberInfoF.ageYearC.setSelectedItem(ageyear);
+
+					String agemonth = age.substring(age.length() - 4, age.length() - 2);
+					MemberInfoF.ageMonthC.setSelectedItem(agemonth);
+
+					String ageday = age.substring(age.length() - 2, age.length());
+					MemberInfoF.ageDayC.setSelectedItem(ageday);
+
+					String email = line[4];
+
+					int atIndex = email.indexOf("@"); // 4
+					String emailId = email.substring(0, atIndex);
+					System.out.println("emailId: " + emailId);
+					MemberInfoF.emailT.setText(emailId);
+
+					// String emailcom=email.substring(email.length()-9, email.length());
+					String emailcom = email.substring(atIndex + 1);
+					MemberInfoF.emailC.setSelectedItem(emailcom);
+
+					String phone = line[5];
+					String telc = phone.substring(phone.length() - 11, phone.length() - 8);
+					MemberInfoF.telC.setSelectedItem(telc);
+
+					String tel1 = phone.substring(phone.length() - 8, phone.length() - 4);
+					MemberInfoF.tel2T.setText(tel1);
+					System.out.println(tel1);
+
+					String tel3 = phone.substring(phone.length() - 4, phone.length());
+					MemberInfoF.tel3T.setText(tel3);
+
 				} else if (line[0].compareTo(Protocol.SENDMESSAGE_ACK) == 0) // 서버로 메세지 받음 [대기실]
 				{
 					RoomF.chatarea.append("[" + line[1] + "] :" + line[2] + '\n');
 
 				} else if (line[0].compareTo(Protocol.ROOMMAKE_OK) == 0) // 방만들어짐
 				{
-					System.out.println("이거 되냐?");
+					//System.out.println("이거 되냐?");
 					String roomList[] = line[1].split("-"); // 방 갯수
 					for (int i = 0; i < roomList.length; i++) {
 						System.out.print(roomList[i] + "/");

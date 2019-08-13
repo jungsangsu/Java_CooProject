@@ -1,5 +1,6 @@
 package Room;
 
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -39,7 +40,9 @@ public class RoomMake extends JFrame {
 		combo1 = new JComboBox<String>(com1);
 
 		makeB = new JButton("만들기");
+		makeB.setBackground(Color.white);
 		canB = new JButton("취 소");
+		canB.setBackground(Color.white);
 
 		JPanel panel1 = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		panel1.add(title);

@@ -4,7 +4,7 @@ import Login.EnterFrame;
 
 /**
  * 
- * @category Main tkd456
+ * @category 
  */
 public class MainClient {
 

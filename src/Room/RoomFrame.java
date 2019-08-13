@@ -1,6 +1,7 @@
 package Room;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -34,19 +36,21 @@ import Room.RoomMake;
  *
  */
 public class RoomFrame extends JFrame {
-	public JButton makeB, exitB, sendB, enterB;
+	public JButton makeB, exitB, sendB, enterB,friendB;
+	public JButton InformationB;
 	private JComboBox<String> sortCB;
 	public JPanel upP, chatP, chatP1, listP, list1P, list2P, roomP, roomP1, sumP, centerPanel;
 	private JPanel[] sortrm;
 	public JTextArea chatarea, usertxt;
 	public JTextField chattxt, tx1, tx2, tx3, tx4, tx5, tx6, tx7, tx8;
-	private JLabel la1, la2, la3, la4, la5, la6;
+	private JLabel la1, la2, la3, la4, la5, la6, mainiconL;
 	private String[] com = { "경영지원", "마케팅", "고객관리", "개발", "디자인" };
 	private JList<String> entlist, frlist;
 	private EtchedBorder eb;
 	private JList<DetailPanel> list;
 	private DefaultListModel<DetailPanel> model;
 	public DefaultListModel<String> userWaitModel;
+	public ImageIcon InformationC, mainicon;
 	public DetailPanel[] dp;
 	RoomMake rmake;
 
@@ -54,6 +58,7 @@ public class RoomFrame extends JFrame {
 	private PrintWriter pw;
 
 	public RoomFrame(BufferedReader br, PrintWriter pw) {
+		setTitle("CooSerivice");
 
 		this.br = br;
 		this.pw = pw;
@@ -64,15 +69,35 @@ public class RoomFrame extends JFrame {
 		upP = new JPanel(new FlowLayout());
 		la6 = new JLabel("정 렬 : ");
 		sortCB = new JComboBox<String>(com);
-		sortCB.setPreferredSize(new Dimension(200, 30));
+		sortCB.setPreferredSize(new Dimension(170, 30));
 		makeB = new JButton("방 만 들 기");
-		makeB.setPreferredSize(new Dimension(400, 30));
+		makeB.setPreferredSize(new Dimension(170, 30));
+		makeB.setBackground(Color.WHITE);
 		exitB = new JButton("exit");
-		exitB.setPreferredSize(new Dimension(200, 30));
+		exitB.setPreferredSize(new Dimension(150, 30));
+		exitB.setBackground(Color.WHITE);
+		friendB = new JButton("친구 추가");
+		friendB.setBackground(Color.WHITE);
+		friendB.setPreferredSize(new Dimension(100, 30));
+		
+		InformationC =new ImageIcon("img/회원정보 아이콘.png");
+		InformationB =new JButton(InformationC);
+		InformationB.setBackground(Color.WHITE);
+		setSize(44,65);
+		
+		mainicon = new ImageIcon("img/CooSeriveicon3.jpg");
+		mainiconL = new JLabel(mainicon);
+		setSize(44,65);
+		
+		
 		upP.add(la6);
 		upP.add(sortCB);
 		upP.add(makeB);
 		upP.add(exitB);
+		upP.add(friendB); //-->Room 친구 추가
+		upP.add(InformationB); //현재 회원정보
+		upP.add(mainiconL);
+		
 
 		// 채팅방 목록
 		roomP = new JPanel(new BorderLayout());
@@ -107,6 +132,7 @@ public class RoomFrame extends JFrame {
 
 		chattxt = new JTextField(30);
 		sendB = new JButton("보내기");
+		sendB.setBackground(Color.WHITE);
 
 		chatP1.add(chattxt);
 		chatP1.add(sendB);

@@ -55,8 +55,10 @@ public class ChatClient extends JFrame {
 		sp_list = new JScrollPane(li_inwon);
 
 		bt_change = new JButton("대화명변경");
+		bt_change.setBackground(Color.white);
 
 		bt_exit = new JButton("나가기");
+		bt_exit.setBackground(Color.white);
 
 		p = new JPanel();
 

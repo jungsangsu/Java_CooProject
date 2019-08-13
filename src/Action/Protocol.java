@@ -1,6 +1,7 @@
 package Action;
 
 public class Protocol {
+	
 	public static final String REGISTER = "100"; // 회원가입(request)
 
 	public static final String IDSEARCH = "110"; // ID찾기 Join (request)
@@ -22,6 +23,18 @@ public class Protocol {
 	public static final String ENTERLOGIN_NO = "122"; // 로그인 실패(NACK)
 
 	public static final String PWSEARCH = "130"; // PW찾기
+	
+	public static final String PWSEARCH_OK="131"; //PW찾기 임시비밀번호 OK;
+	
+	public static final String PWSEARCH_NO = "132"; //PW찾기 NO
+	
+	public static final String MEMBERINFO_OK="133"; // 회원정보 수정 OK
+	
+	public static final String MEMBERINFO_DELETE_OK ="135"; //회원정보 삭제 OK
+	
+	public static final String MEMBERINFO="150"; //회원정보-->내 정보 보여주기
+	
+	//public static final String  FRIEND_USER = "155"; //내 친구 목록 
 
 	public static final String ROOMMAKE = "200"; // 방만들기
 
